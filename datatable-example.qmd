@@ -47,19 +47,20 @@ library(tictoc)
 library(dtplyr)
 ```
 
+
 ### Compare reading files: 
 
 *Note:* the `tic()` and `toc()` lines here are only to return speeds - what's between them is the code being run to compare `dplyr` & `data.table`.
  
 ```{r}
 tic()
-ftm_trees_df <- readr::read_csv("FTM_trees.csv")
+ftm_trees_df <- readr::read_csv("FTM_trees.csv") # readr is the tidyverse way to read in csv files
 toc()       
 ```
 
 ```{r}
 tic()
-ftm_trees_dt <- data.table::fread("FTM_trees.csv")
+ftm_trees_dt <- data.table::fread("FTM_trees.csv") # fread works the same way
 toc()
 ```
 
@@ -72,9 +73,12 @@ class(ftm_trees_dt)
 
 ### Example: compare filtering times
 
+Wrangle the dataset to only include ponderosa species of trees 
+
 ```{r}
 tic()
-ponderosa <- ftm_trees_df %>% filter(Species_name == "ponderosa")
+ponderosa <- ftm_trees_df %>% 
+  filter(Species_name == "ponderosa")
 toc()
 ```
 
@@ -101,7 +105,7 @@ lazy_trees <- lazy_dt(ftm_trees_df)
 This is an interesting object: 
 
 ```{r}
-class(lazy_trees)
+class(lazy_trees) # under the hood, the lazy_dt() function is the first step to use dplyr syntax but R converts it into base R so it runs faster
 ```
 
 Working with that object using `dplyr` verbs will return the code you'd need to do the same thing in `data.table`! 
@@ -146,7 +150,7 @@ ftm_trees_df %>%
   group_by(Species_name) %>% 
   summarize(mean_height = mean(HT_m, na.rm = TRUE),
             mean_diameter = mean(DBH_cm, na.rm = TRUE)) %>% 
-  as_tibble()
+  as_tibble() # converts the obj into a class we are familiar with
 ```
 
 
